@@ -271,7 +271,7 @@ public class Player : MonoBehaviour
 	{   //버그있는 부분
 		animator.SetTrigger("isDead");
 		rigid.gravityScale = 0f;
-		rigid.simulated = false;
+		//rigid.simulated = false;
 		capsuleCollider.enabled = false;
 	}
 	public void OnUseplayer(Item _itemData)
