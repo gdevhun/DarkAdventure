@@ -29,7 +29,6 @@ public class GameManager : MonoBehaviour
 		if (isGameOver)
 		{
 			Player.Instance.PlayerDeadEvent();
-			Player.Instance.enabled = false;
 			StartCoroutine(ActiveLosePanel());
 		}
 	}
@@ -37,7 +36,6 @@ public class GameManager : MonoBehaviour
 	{
 		if (isWinGame)
 		{
-			Player.Instance.enabled = false;
 			StartCoroutine(ActiveWinPanel());
 		}
 	}

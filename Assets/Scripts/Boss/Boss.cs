@@ -12,11 +12,13 @@ public class Boss : MonoBehaviour
 	private float currentBossHP;
 	[SerializeField] private float maxBossHP;
 	private Animator anim;
+	private Rigidbody2D rigid;
 	
 	private void Awake()
 	{
 		currentBossHP = maxBossHP;
 		anim = GetComponent<Animator>();
+		rigid= GetComponent<Rigidbody2D>();
 	}
 	private void Start()
 	{
@@ -42,7 +44,7 @@ public class Boss : MonoBehaviour
 	private void OnDead()
 	{
 		GameManager.Instance.isWinGame = true;
-		Debug.Log(GameManager.Instance.isWinGame);
+		GameManager.Instance.WinGame();
 	}
 
 	private void OnCollisionEnter2D(Collision2D collision)

@@ -136,7 +136,7 @@ public class Player : MonoBehaviour
 			Vector2 fallingDirection = Vector2.up; // 아래로 떨어지는 방향을 나타내는 벡터
 
 			// 두 벡터의 방향을 비교
-			isGrounded = (Vector2.Dot(contact.normal, fallingDirection) > 0.7f);
+			isGrounded = (Vector2.Dot(contact.normal, fallingDirection) > 0.6);
 			// 충돌 지점의 법선 벡터가 아래로 떨어지는 방향과 대략적으로 일치하는 경우		
 			animator.SetBool("isJump", !isGrounded);
 		}
@@ -271,8 +271,9 @@ public class Player : MonoBehaviour
 	{   //버그있는 부분
 		animator.SetTrigger("isDead");
 		rigid.gravityScale = 0f;
-		//rigid.simulated = false;
+		rigid.simulated = false;
 		capsuleCollider.enabled = false;
+		enabled = false;
 	}
 	public void OnUseplayer(Item _itemData)
 	{
