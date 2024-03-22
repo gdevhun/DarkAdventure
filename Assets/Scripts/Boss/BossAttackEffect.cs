@@ -8,7 +8,10 @@ public class BossAttackEffect : MonoBehaviour
 	public Type type;
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		PlayerHp.Instance.TakeDamage(type.damageVal,transform.position);
+		if (collision.gameObject.CompareTag("Player"))
+		{
+			PlayerHp.Instance.TakeDamage(type.damageVal, transform.position);
+		}
 	}
 
 }

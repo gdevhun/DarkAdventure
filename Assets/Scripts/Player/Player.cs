@@ -5,9 +5,8 @@ using UnityEngine.Rendering.Universal;
 public class Player : MonoBehaviour
 {
 	public static Player Instance = null;
-	
 
-	public Vector2 inputVec;
+	[SerializeField] private Vector2 inputVec;
 	private Rigidbody2D rigid;
 	private SpriteRenderer spriter;
 	private Animator animator;
@@ -17,7 +16,7 @@ public class Player : MonoBehaviour
 	public GameObject SkillEffect;
 	private AudioSource playerFootSound;
 
-	private bool isGrounded;
+	public bool isGrounded;
 	private bool isImortal;
 	private float jumpVelocity = 12f;
 	private float speed;	
@@ -39,6 +38,7 @@ public class Player : MonoBehaviour
 		{
 			Destroy(this);
 		}
+
 	}
 	void Start()
     {
@@ -127,17 +127,18 @@ public class Player : MonoBehaviour
 	
 	}
 
-	private void OnCollisionEnter2D(Collision2D other)
+	/*private void OnCollisionEnter2D(Collision2D other)
 	{
 		if (other.gameObject.CompareTag ("Ground"))
 		{
 			ContactPoint2D contact = other.GetContact(0);
-			// ¾Æ·¡·Î ¶³¾îÁö´Â ¹æÇâÀ» È®ÀÎ
-			Vector2 fallingDirection = Vector2.up; // ¾Æ·¡·Î ¶³¾îÁö´Â ¹æÇâÀ» ³ªÅ¸³»´Â º¤ÅÍ
+			// ì•„ë˜ë¡œ ë–¨ì–´ì§€ëŠ” ë°©í–¥ì„ í™•ì¸
+			Vector2 fallingDirection = Vector2.up; // ì•„ë˜ë¡œ ë–¨ì–´ì§€ëŠ” ë°©í–¥ì„ ë‚˜íƒ€ë‚´ëŠ” ë²¡í„°
 
-			// µÎ º¤ÅÍÀÇ ¹æÇâÀ» ºñ±³
+			// ë‘ ë²¡í„°ì˜ ë°©í–¥ì„ ë¹„êµ
 			isGrounded = (Vector2.Dot(contact.normal, fallingDirection) > 0.6);
-			// Ãæµ¹ ÁöÁ¡ÀÇ ¹ı¼± º¤ÅÍ°¡ ¾Æ·¡·Î ¶³¾îÁö´Â ¹æÇâ°ú ´ë·«ÀûÀ¸·Î ÀÏÄ¡ÇÏ´Â °æ¿ì		
+			Debug.Log(Vector2.Dot(contact.normal, fallingDirection));
+			// ì¶©ëŒ ì§€ì ì˜ ë²•ì„  ë²¡í„°ê°€ ì•„ë˜ë¡œ ë–¨ì–´ì§€ëŠ” ë°©í–¥ê³¼ ëŒ€ëµì ìœ¼ë¡œ ì¼ì¹˜í•˜ëŠ” ê²½ìš°		
 			animator.SetBool("isJump", !isGrounded);
 		}
 	}
@@ -149,16 +150,15 @@ public class Player : MonoBehaviour
 	private void OnCollisionStay2D(Collision2D collision)
 	{
 		OnCollisionEnter2D(collision);
-	}
+	}*/
 	private void PlayFootstepSound()
 	{
-		// ¹ß¼Ò¸®
+		// ë°œì†Œë¦¬
 		if (!playerFootSound.isPlaying)
 		{
 			playerFootSound.Play();
 		}
 	}
-
 	private void Jump()
 	{
 		SoundManager.Instance.PlaySFX(SoundType.PlayerJumpSFX, 1f);
@@ -207,7 +207,7 @@ public class Player : MonoBehaviour
 	}
 	public void PlayerHitSound()
 	{
-		int randomHitSound = Random.Range(0, 2); //0ÀÌ»ó 1¹Ì¸¸.
+		int randomHitSound = Random.Range(0, 2); //0ì´ìƒ 1ë¯¸ë§Œ.
 		if (randomHitSound == 0)
 		{
 			SoundManager.Instance.PlaySFX(SoundType.PlayerHitSFX, 1f);
@@ -228,34 +228,34 @@ public class Player : MonoBehaviour
 	{
 		playerAttackDmg += _dmg;
 	}
-	public void PlayerLightUP() //¾ÆÀÌÅÛÈ¹µæ½Ã ÁÖº¯½Ã¾ß ¹à°ÔÇÏ´Â ÇÔ¼ö
+	public void PlayerLightUP() //ì•„ì´í…œíšë“ì‹œ ì£¼ë³€ì‹œì•¼ ë°ê²Œí•˜ëŠ” í•¨ìˆ˜
 	{
 		Light2D playerLight2d=GetComponentInChildren<Light2D>();
 		if(playerLight2d.falloffIntensity>=0.5)
 			playerLight2d.falloffIntensity -= 0.1f;
 		return;
 	}
-	public void KnockBack(Vector2 enemyPos) //³Ëº¤ O
+	public void KnockBack(Vector2 enemyPos) //ë„‰ë²¡ O
 	{
-		// ¹«Àû Å¸ÀÓ ¹ßµ¿
+		// ë¬´ì  íƒ€ì„ ë°œë™
 		isImortal = true;
-		// ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà 
+		// ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰ 
 		animator.SetBool("isHit", true);
 		PlayerHitSound();
 		StartCoroutine(ImortalRoutine());
 		
-		// ¹°¸®Àû ³Ë¹é 
+		// ë¬¼ë¦¬ì  ë„‰ë°± 
 		Vector2 playerPos = transform.position;
 		Vector2 forceDirection = (playerPos- enemyPos).normalized;
 		forceDirection.y = 1f;
 		rigid.AddForce(forceDirection * 9, ForceMode2D.Impulse);
 
 	}
-	public void NotKnockBack()  //³Ëº¤X
+	public void NotKnockBack()  //ë„‰ë²¡X
 	{
-		// ¹«Àû Å¸ÀÓ ¹ßµ¿
+		// ë¬´ì  íƒ€ì„ ë°œë™
 		isImortal = true;
-		// ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà 
+		// ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰ 
 		animator.SetBool("isHit", true);
 		PlayerHitSound();
 		StartCoroutine(ImortalRoutine());
@@ -268,7 +268,7 @@ public class Player : MonoBehaviour
 		animator.SetBool("isHit", false);
 	}
 	public void PlayerDeadEvent()
-	{   //¹ö±×ÀÖ´Â ºÎºĞ
+	{   //ë²„ê·¸ìˆëŠ” ë¶€ë¶„
 		animator.SetTrigger("isDead");
 		rigid.gravityScale = 0f;
 		rigid.simulated = false;
