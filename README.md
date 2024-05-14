@@ -3,7 +3,7 @@
 # [유니티 개인 프로젝트2]
 
 ## 개발 기간 📅
-- 2024.2.1~
+2024.2.1~ 2024.2.27
 
 ## 역할 분담 🧑🏻‍💻
 ### 개발 인원 : 1명
@@ -37,3 +37,4 @@
 
 ## 기술 스택 💻
 <img src="https://img.shields.io/badge/Unity-FFFFFF?style=for-the-badge&logo=Unity&logoColor=black"> 
+<img src="https://img.shields.io/badge/csharp-512BD4?style=for-the-badge&logo=csharp&logoColor=white">
