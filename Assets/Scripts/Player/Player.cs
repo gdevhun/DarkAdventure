@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
 	private AudioSource playerFootSound;
 
 	public bool isGrounded;
-	private bool isImortal;
+	public bool isImortal = false;
 	private float jumpVelocity = 12f;
 	private float speed;	
 	private readonly float walkSpeed = 3.5f;
@@ -161,7 +161,7 @@ public class Player : MonoBehaviour
 	}
 	private void Jump()
 	{
-		SoundManager.Instance.PlaySFX(SoundType.PlayerJumpSFX, 1f);
+		SoundManager.Instance.PlaySFX(SoundType.PlayerJumpSFX);
 		isGrounded = false;
 		rigid.velocity = new Vector2(rigid.velocity.x, jumpVelocity);
 		animator.SetBool("isJump", !isGrounded);
@@ -172,7 +172,7 @@ public class Player : MonoBehaviour
 		if(!isAttacking && isGrounded)
 		{
 			animator.SetTrigger("Attack1");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerSwingSFX, 1f);
+			SoundManager.Instance.PlaySFX(SoundType.PlayerSwingSFX);
 			StartCoroutine(AttackCoolTime());
 		}
 	}
@@ -181,7 +181,7 @@ public class Player : MonoBehaviour
 		if (!isAttacking && isGrounded)
 		{
 			animator.SetTrigger("Attack2");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerSwingSFX2, 1f);
+			SoundManager.Instance.PlaySFX(SoundType.PlayerSwingSFX2);
 			StartCoroutine(AttackCoolTime());
 		}
 	}
@@ -190,7 +190,7 @@ public class Player : MonoBehaviour
 		if (!isAttacking && isGrounded && (PlayerMp.Instance.CurrentMp >= 5))
 		{
 			animator.SetTrigger("Counter");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerElecSFX, 1f);
+			SoundManager.Instance.PlaySFX(SoundType.PlayerElecSFX);
 			PlayerMp.Instance.UseSkill(5f);
 		}
 	}
@@ -199,7 +199,7 @@ public class Player : MonoBehaviour
 		if (!isAttacking && isGrounded && (PlayerMp.Instance.CurrentMp >= 10)) 
 		{
 			animator.SetTrigger("Attack4");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerElecSFX2, 1f);
+			SoundManager.Instance.PlaySFX(SoundType.PlayerElecSFX2);
 			PlayerMp.Instance.UseSkill(10f);
 			StartCoroutine(AttackCoolTime());
 		}
@@ -210,11 +210,11 @@ public class Player : MonoBehaviour
 		int randomHitSound = Random.Range(0, 2); //0이상 1미만.
 		if (randomHitSound == 0)
 		{
-			SoundManager.Instance.PlaySFX(SoundType.PlayerHitSFX, 1f);
+			SoundManager.Instance.PlaySFX(SoundType.PlayerHitSFX);
 		}
 		else
 		{
-			SoundManager.Instance.PlaySFX(SoundType.PlayerHitSFX2, 1f);
+			SoundManager.Instance.PlaySFX(SoundType.PlayerHitSFX2);
 		}
 	}
 	private IEnumerator AttackCoolTime()
@@ -281,19 +281,19 @@ public class Player : MonoBehaviour
 		{
 			case Item.Type.HpPotion:
 				PlayerHp.Instance.RestoreHp(_itemData.value);
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUsePotion, 1f);
+				SoundManager.Instance.PlaySFX(SoundType.PlayerUsePotion);
 				break;
 			case Item.Type.MpPotion:
 				PlayerMp.Instance.RestoreMp(_itemData.value);
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUsePotion, 1f);
+				SoundManager.Instance.PlaySFX(SoundType.PlayerUsePotion);
 				break;
 			case Item.Type.Lighter:
 				PlayerLightUP();
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUserItem2, 1f);
+				SoundManager.Instance.PlaySFX(SoundType.PlayerUserItem2);
 				break;
 			case Item.Type.PowerItem:
 				DamageUp(_itemData.value);
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUseItem, 1f);
+				SoundManager.Instance.PlaySFX(SoundType.PlayerUseItem);
 				break;
 		}
 	}
