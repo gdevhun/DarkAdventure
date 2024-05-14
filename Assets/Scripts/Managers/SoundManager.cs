@@ -8,17 +8,17 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 	[System.Serializable]
 	public class Sound
 	{
-		public SoundType SoundType;
-		public AudioClip Clip;
+		public SoundType soundType;
+		public AudioClip clip;
 	}
 
 	[SerializeField]
-	private List<Sound> _bgms = null;
+	private List<Sound> bgms = null;
 	[SerializeField]
-	private List<Sound> _sfxs = null;
+	private List<Sound> sfxs = null;
 	[SerializeField]
-	private AudioSource _bgmPlayer = null;
-	public List<AudioSource> SfxPlayers = new List<AudioSource>();
+	private AudioSource bgmPlayer = null;
+	public List<AudioSource> sfxPlayers = new List<AudioSource>();
 
 	private Dictionary<SoundType, AudioClip> _sfxDictionary;
 
@@ -30,12 +30,12 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 		base.Awake();
 
 		// SFX 딕셔너리 초기화
-		_sfxDictionary = _sfxs.ToDictionary(s => s.SoundType, s => s.Clip);
+		_sfxDictionary = sfxs.ToDictionary(s => s.soundType, s => s.clip);
 	}
 
 	private void Start()
 	{
-		_bgmPlayer = gameObject.AddComponent<AudioSource>();
+		bgmPlayer = gameObject.AddComponent<AudioSource>();
 		// 볼륨 초기화
 		bgmVolume = 0.6f; 
 		sfxVolume = 1f;
@@ -47,23 +47,23 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 		for (int i = 0; i < 20; i++)
 		{
 			AudioSource sfxPlayer = gameObject.AddComponent<AudioSource>();
-			SfxPlayers.Add(sfxPlayer);
+			sfxPlayers.Add(sfxPlayer);
 			_sfxQueue.Enqueue(sfxPlayer);
 		}
 	}
 
 	public void PlayBGM(SoundType soundType)
 	{
-		var bgm = _bgms.First(b => b.SoundType == soundType);
-		_bgmPlayer.clip = bgm.Clip;
-		_bgmPlayer.volume = bgmVolume; // 볼륨 조절 bgmVolume
-		_bgmPlayer.loop = true;
-		_bgmPlayer.Play();
+		var bgm = bgms.First(b => b.soundType == soundType);
+		bgmPlayer.clip = bgm.clip;
+		bgmPlayer.volume = bgmVolume; // 볼륨 조절 bgmVolume
+		bgmPlayer.loop = true;
+		bgmPlayer.Play();
 	}
 
 	public void StopBGM()
 	{
-		_bgmPlayer.Stop();
+		bgmPlayer.Stop();
 	}
 	
 	
@@ -106,7 +106,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 		{
 			// 새 플레이어를 생성하고 리스트에 추가
 			AudioSource newSFXPlayer = gameObject.AddComponent<AudioSource>();
-			SfxPlayers.Add(newSFXPlayer);
+			sfxPlayers.Add(newSFXPlayer);
 			return newSFXPlayer;
 		}
 	}
@@ -115,7 +115,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 	public void SetBgmVolume(float volume)
 	{
 		// 슬라이더 값에따라 볼륨 적용
-		_bgmPlayer.volume = volume;
+		bgmPlayer.volume = volume;
 
 		// 슬라이더 값을 변수에 저장해서 배경음악을 실행할때마다 볼륨을 지정
 		bgmVolume = volume;
