@@ -1,23 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
-	
+public class GameManager : SingletonBehaviour<GameManager>
 {
-	public static GameManager Instance;
-	private void Awake()
-	{
-		if (Instance == null)
-		{
-			Instance = this;
-		}
-		else if (Instance != this)
-		{
-			Destroy(this);
-		}
-	}
-
+	//게임메니저는 게임신에 있음.
 	private WaitForSeconds delayTime = new WaitForSeconds(2f);
 	public bool isGameOver = false;
 	public bool isWinGame = false;
@@ -32,6 +20,12 @@ public class GameManager : MonoBehaviour
 			StartCoroutine(ActiveLosePanel());
 		}
 	}
+
+	private void Start()
+	{
+		SoundManager.Instance.PlayBGM(SoundType.FirstBGM);
+	}
+
 	public void WinGame()
 	{
 		if (isWinGame)

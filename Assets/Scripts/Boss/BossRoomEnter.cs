@@ -28,6 +28,7 @@ public class BossRoomEnter : MonoBehaviour
 	{
 		if (collision.CompareTag("Player"))
 		{
+			SoundManager.Instance.PlayBGM(SoundType.SecondBGM);
 			StartCoroutine(PlayCameraEvent());
             boxCol.enabled = false;
 		}

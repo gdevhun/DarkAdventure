@@ -21,7 +21,7 @@ public class ItemButton : MonoBehaviour
 
 	public void OnMouseEnter()
 	{
-		SoundManager.Instance.PlaySFX(SoundType.PlayerBubbleSFX,1f);
+		SoundManager.Instance.PlaySFX(SoundType.PlayerBubbleSFX);
 		if(itemData != null)
 		{
 			explainText.ChangeInfo(itemData);

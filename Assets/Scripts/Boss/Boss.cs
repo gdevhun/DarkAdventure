@@ -9,11 +9,12 @@ public class Boss : MonoBehaviour
 	[SerializeField] private ActionPattern currentPattern;
 	public List<AudioSource> BossSoundSFX = new List<AudioSource>();
 
-	private float currentBossHP;
+	public float currentBossHP;
 	[SerializeField] private float maxBossHP;
 	private Animator anim;
 	private Rigidbody2D rigid;
-	
+	private bool isImortal;
+	private WaitForSeconds imortalTime = new WaitForSeconds(0.3f);
 	private void Awake()
 	{
 		currentBossHP = maxBossHP;
@@ -33,12 +34,24 @@ public class Boss : MonoBehaviour
 		currentPattern = (ActionPattern)ranPattern;
 		anim.SetTrigger("Pattern" + ranPattern);
 	}
+
+	private IEnumerator ImortalTimeBoss()
+	{
+		isImortal = true;
+		yield return imortalTime;
+		isImortal = false;
+	}
 	public void DamagedbyPlayer(float playerDmg)
 	{
-		currentBossHP-=playerDmg;
-		if (currentBossHP <= 0)
+		if (!isImortal)
 		{
-			anim.SetTrigger("isDead");
+			currentBossHP-=playerDmg;
+			StartCoroutine(ImortalTimeBoss());
+			anim.SetTrigger("isHit");
+			if (currentBossHP <= 0)
+			{
+				anim.SetTrigger("isDead");
+			}
 		}
 	}
 	private void OnDead()
@@ -49,8 +62,11 @@ public class Boss : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-		PlayerHp.Instance.TakeDamage(9f);
-		Player.Instance.PlayerHitSound();
+		if (collision.gameObject.CompareTag("Player"))
+		{
+			PlayerHp.Instance.TakeDamage(5f);
+			Player.Instance.PlayerHitSound();
+		}
 	}
 
 	//boss sound
