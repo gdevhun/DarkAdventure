@@ -15,13 +15,12 @@ public class ItemButton : MonoBehaviour
 	{
 		explainText = FindObjectOfType<ItemInfoText>();
 		itemImage = GetComponentsInChildren<Image>()[1];
-		//btnImage = GetComponentsInChildren<Image>()[0];
 		button = GetComponent<Button>();
 	}
 
 	public void OnMouseEnter()
 	{
-		SoundManager.Instance.PlaySFX(SoundType.PlayerBubbleSFX);
+		SoundManager.Instance.PlaySfx(SoundType.PlayerBubbleSfx);
 		if(itemData != null)
 		{
 			explainText.ChangeInfo(itemData);

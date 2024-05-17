@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Boss : MonoBehaviour
 {
@@ -14,7 +17,7 @@ public class Boss : MonoBehaviour
 	private Animator anim;
 	private Rigidbody2D rigid;
 	private bool isImortal;
-	private WaitForSeconds imortalTime = new WaitForSeconds(0.3f);
+	private float imortalTime = 0.3f;
 	private void Awake()
 	{
 		currentBossHP = maxBossHP;
@@ -35,10 +38,10 @@ public class Boss : MonoBehaviour
 		anim.SetTrigger("Pattern" + ranPattern);
 	}
 
-	private IEnumerator ImortalTimeBoss()
+	private async UniTaskVoid ImortalTimeBoss()
 	{
 		isImortal = true;
-		yield return imortalTime;
+		await UniTask.Delay(TimeSpan.FromSeconds(imortalTime));
 		isImortal = false;
 	}
 	public void DamagedbyPlayer(float playerDmg)
@@ -46,7 +49,7 @@ public class Boss : MonoBehaviour
 		if (!isImortal)
 		{
 			currentBossHP-=playerDmg;
-			StartCoroutine(ImortalTimeBoss());
+			ImortalTimeBoss().Forget();
 			anim.SetTrigger("isHit");
 			if (currentBossHP <= 0)
 			{

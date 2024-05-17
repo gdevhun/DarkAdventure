@@ -17,9 +17,4 @@ public class InventoryUI : MonoBehaviour
 	{
 		rectTransform.anchoredPosition = Vector2.up * 1100f;
 	}
-	public void ResfreshItem()
-	{
-		
-	}
-
 }

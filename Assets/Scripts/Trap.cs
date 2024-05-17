@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class Trap : MonoBehaviour
@@ -14,7 +16,7 @@ public class Trap : MonoBehaviour
 		if(other.gameObject.CompareTag("Player")) 
 		{
 			isPlayerInside = true;
-			StartCoroutine(DamagePlayer());
+			DamagePlayer().Forget();
 			
 		}
 	}
@@ -26,14 +28,14 @@ public class Trap : MonoBehaviour
 			isPlayerInside = false;
 		}
 	}
-	IEnumerator DamagePlayer()
+	private async UniTaskVoid DamagePlayer()
 	{
 		while(isPlayerInside)
 		{
 			//플레이어 피감소, 데미지 이펙트 에니메이션 추가필요
 			PlayerHp.Instance.TakeDamage(hitDamage);
 			Player.Instance.NotKnockBack();
-			yield return new WaitForSeconds(hitTime);
+			await UniTask.Delay(TimeSpan.FromSeconds(hitTime));
 		}
 	}
 }

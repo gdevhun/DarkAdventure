@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -13,13 +15,12 @@ public class Enemy : MonoBehaviour
 	public Vector2 endPos;
 	public float speed;
 	protected bool isImortal;
-	protected WaitForSeconds imortalTime = new WaitForSeconds(0.5f);
+	private readonly float imortalTime = 0.5f;
 	protected RaycastHit2D hit;
 	protected Ray2D ray;
 
-	public float enemyAttackDmg;
-	public float pushForce;
-	public float attackCooltime = 1.5f;
+	public float enemyAttackDmg;	 
+	protected readonly float attackCooltime = 1.5f;
 	protected float attackDelay = 0.3f;
 	protected float timer;
 
@@ -135,7 +136,7 @@ public class Enemy : MonoBehaviour
 			return;
 		}
 		isImortal = true;
-		StartCoroutine(ImortalRoutine());
+		ImortalRoutine().Forget();
 		Vector2 forceDirection = (transform.position - playerTrans.position).normalized;
 		forceDirection.y = 0.6f;
 		rb.AddForce(forceDirection * 3, ForceMode2D.Impulse);
@@ -158,9 +159,9 @@ public class Enemy : MonoBehaviour
 	{   // 애니메이션 이벤트에서 호출될 함수
 		gameObject.SetActive(false);
 	}
-	IEnumerator ImortalRoutine()
+	private async UniTaskVoid ImortalRoutine()
 	{
-		yield return imortalTime;
+		await UniTask.Delay(TimeSpan.FromSeconds(imortalTime));
 		isImortal = false;
 	}
 	

@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
-    protected readonly float maxHp = 100f;
-    protected readonly float maxMp = 100f;
+    private readonly float maxHp = 100f;
+    private readonly float maxMp = 100f;
     private readonly float increaseInterval = 3f;
 
     protected float currentHp;
@@ -32,9 +32,6 @@ public class PlayerStats : MonoBehaviour
 	{
         currentHp = Mathf.Min(maxHp, currentHp + amount);
         currentMp = Mathf.Min(maxMp, currentMp + amount);
-
-		Debug.Log("CurrentHp: " + currentHp);
-		Debug.Log("CurrentMp: " + currentMp);
 	}
 
 	protected void UpdateStats(Image[] imageArray,float currentVal)

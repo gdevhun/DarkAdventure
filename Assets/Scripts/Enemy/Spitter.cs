@@ -6,7 +6,7 @@ public class Spitter : Enemy
 {
 	public GameObject projectilePrefab;
 	public Transform projectileSpawnPoint;
-	public float projectileSpeed;
+	private float projectileSpeed;
 	private Vector2 dirVec;
 	private float angle;
 

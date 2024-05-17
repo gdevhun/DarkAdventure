@@ -29,7 +29,7 @@ public class Items : MonoBehaviour
 			}
 			else
 			{
-				SoundManager.Instance.PlaySFX(SoundType.PlayerGetItem);
+				SoundManager.Instance.PlaySfx(SoundType.PlayerGetItem);
 				Inventory.Instance.GetItem(itemData);
 				gameObject.SetActive(false);
 		    }

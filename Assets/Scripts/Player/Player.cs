@@ -1,6 +1,9 @@
+using System;
 using System.Collections;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
@@ -23,7 +26,7 @@ public class Player : MonoBehaviour
 	private readonly float walkSpeed = 3.5f;
 	private readonly float runSpeed = 5f;
 
-	private WaitForSeconds imortalTime = new WaitForSeconds(0.1f);
+	private readonly float imortalTime = 0.1f;
 	public float playerAttackDmg = 3f;
 	private readonly float attackCoolTime = 0.7f;
 	private bool isAttacking = false;
@@ -161,7 +164,7 @@ public class Player : MonoBehaviour
 	}
 	private void Jump()
 	{
-		SoundManager.Instance.PlaySFX(SoundType.PlayerJumpSFX);
+		SoundManager.Instance.PlaySfx(SoundType.PlayerJumpSfx);
 		isGrounded = false;
 		rigid.velocity = new Vector2(rigid.velocity.x, jumpVelocity);
 		animator.SetBool("isJump", !isGrounded);
@@ -172,8 +175,8 @@ public class Player : MonoBehaviour
 		if(!isAttacking && isGrounded)
 		{
 			animator.SetTrigger("Attack1");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerSwingSFX);
-			StartCoroutine(AttackCoolTime());
+			SoundManager.Instance.PlaySfx(SoundType.PlayerSwingSfx);
+			AttackCoolTime().Forget();
 		}
 	}
 	private void Attack_W()
@@ -181,8 +184,8 @@ public class Player : MonoBehaviour
 		if (!isAttacking && isGrounded)
 		{
 			animator.SetTrigger("Attack2");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerSwingSFX2);
-			StartCoroutine(AttackCoolTime());
+			SoundManager.Instance.PlaySfx(SoundType.PlayerSwingSfx2);
+			AttackCoolTime().Forget();
 		}
 	}
 	private void Counter()
@@ -190,7 +193,7 @@ public class Player : MonoBehaviour
 		if (!isAttacking && isGrounded && (PlayerMp.Instance.CurrentMp >= 5))
 		{
 			animator.SetTrigger("Counter");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerElecSFX);
+			SoundManager.Instance.PlaySfx(SoundType.PlayerElecSfx);
 			PlayerMp.Instance.UseSkill(5f);
 		}
 	}
@@ -199,9 +202,9 @@ public class Player : MonoBehaviour
 		if (!isAttacking && isGrounded && (PlayerMp.Instance.CurrentMp >= 10)) 
 		{
 			animator.SetTrigger("Attack4");
-			SoundManager.Instance.PlaySFX(SoundType.PlayerElecSFX2);
+			SoundManager.Instance.PlaySfx(SoundType.PlayerElecSfx2);
 			PlayerMp.Instance.UseSkill(10f);
-			StartCoroutine(AttackCoolTime());
+			AttackCoolTime().Forget();
 		}
 
 	}
@@ -210,17 +213,17 @@ public class Player : MonoBehaviour
 		int randomHitSound = Random.Range(0, 2); //0이상 1미만.
 		if (randomHitSound == 0)
 		{
-			SoundManager.Instance.PlaySFX(SoundType.PlayerHitSFX);
+			SoundManager.Instance.PlaySfx(SoundType.PlayerHitSfx);
 		}
 		else
 		{
-			SoundManager.Instance.PlaySFX(SoundType.PlayerHitSFX2);
+			SoundManager.Instance.PlaySfx(SoundType.PlayerHitSfx2);
 		}
 	}
-	private IEnumerator AttackCoolTime()
+	private async UniTaskVoid AttackCoolTime()
 	{
 		isAttacking = true;
-		yield return new WaitForSeconds(attackCoolTime);
+		await UniTask.Delay(TimeSpan.FromSeconds(attackCoolTime));
 		isAttacking = false;
 	}
 
@@ -242,7 +245,7 @@ public class Player : MonoBehaviour
 		// 애니메이션 실행 
 		animator.SetBool("isHit", true);
 		PlayerHitSound();
-		StartCoroutine(ImortalRoutine());
+		ImortalRoutine().Forget();
 		
 		// 물리적 넉백 
 		Vector2 playerPos = transform.position;
@@ -258,12 +261,12 @@ public class Player : MonoBehaviour
 		// 애니메이션 실행 
 		animator.SetBool("isHit", true);
 		PlayerHitSound();
-		StartCoroutine(ImortalRoutine());
+		ImortalRoutine().Forget();
 
 	}
-	private IEnumerator ImortalRoutine()
+	private async UniTaskVoid ImortalRoutine()
 	{
-		yield return imortalTime;
+		await UniTask.Delay(TimeSpan.FromSeconds(imortalTime));
 		isImortal = false;
 		animator.SetBool("isHit", false);
 	}
@@ -281,19 +284,19 @@ public class Player : MonoBehaviour
 		{
 			case Item.Type.HpPotion:
 				PlayerHp.Instance.RestoreHp(_itemData.value);
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUsePotion);
+				SoundManager.Instance.PlaySfx(SoundType.PlayerUsePotion);
 				break;
 			case Item.Type.MpPotion:
 				PlayerMp.Instance.RestoreMp(_itemData.value);
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUsePotion);
+				SoundManager.Instance.PlaySfx(SoundType.PlayerUsePotion);
 				break;
 			case Item.Type.Lighter:
 				PlayerLightUP();
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUserItem2);
+				SoundManager.Instance.PlaySfx(SoundType.PlayerUserItem2);
 				break;
 			case Item.Type.PowerItem:
 				DamageUp(_itemData.value);
-				SoundManager.Instance.PlaySFX(SoundType.PlayerUseItem);
+				SoundManager.Instance.PlaySfx(SoundType.PlayerUseItem);
 				break;
 		}
 	}

@@ -24,7 +24,6 @@ public class FallingGhoul : Enemy
 		{
 			base.FixedUpdate();
 		}
-		return;
 	}
 	protected override void OnTriggerEnter2D(Collider2D collision)
 	{  
