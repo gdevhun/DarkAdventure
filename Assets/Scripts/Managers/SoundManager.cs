@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class SoundManager : SingletonBehaviour<SoundManager>
@@ -24,26 +26,26 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
 	private Queue<AudioSource> _sfxQueue = new Queue<AudioSource>();
 
-	public float bgmVolume, sfxVolume; // ¹è°æÀ½ º¼·ı ¹× È¿°úÀ½ º¼·ı
+	public float bgmVolume, sfxVolume; // ë°°ê²½ìŒ ë³¼ë¥¨ ë° íš¨ê³¼ìŒ ë³¼ë¥¨
 	protected override void Awake()
 	{
 		base.Awake();
 
-		// SFX µñ¼Å³Ê¸® ÃÊ±âÈ­
+		// SFX ë”•ì…”ë„ˆë¦¬ ì´ˆê¸°í™”
 		_sfxDictionary = sfxs.ToDictionary(s => s.soundType, s => s.clip);
 	}
 
 	private void Start()
 	{
 		bgmPlayer = gameObject.AddComponent<AudioSource>();
-		// º¼·ı ÃÊ±âÈ­
+		// ë³¼ë¥¨ ì´ˆê¸°í™”
 		bgmVolume = 0.6f; 
 		sfxVolume = 1f;
 		
-		// ¸Ş´ºbgmÀç»ı
+		// ë©”ë‰´bgmì¬ìƒ
 		SoundManager.Instance.PlayBGM(SoundType.MenuBGM);
 
-		// SFX ÇÃ·¹ÀÌ¾î ¸î °³¸¦ ÃÊ±â¿¡ »ı¼ºÇÏ°í ¸®½ºÆ®¿¡ Ãß°¡
+		// SFX í”Œë ˆì´ì–´ ëª‡ ê°œë¥¼ ì´ˆê¸°ì— ìƒì„±í•˜ê³  ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
 		for (int i = 0; i < 20; i++)
 		{
 			AudioSource sfxPlayer = gameObject.AddComponent<AudioSource>();
@@ -56,7 +58,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 	{
 		var bgm = bgms.First(b => b.soundType == soundType);
 		bgmPlayer.clip = bgm.clip;
-		bgmPlayer.volume = bgmVolume; // º¼·ı Á¶Àı bgmVolume
+		bgmPlayer.volume = bgmVolume; // ë³¼ë¥¨ ì¡°ì ˆ bgmVolume
 		bgmPlayer.loop = true;
 		bgmPlayer.Play();
 	}
@@ -67,36 +69,37 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 	}
 	
 	
-	// »ç¿îµå ÇÃ·¹ÀÌ°¡ ³¡³ª¸é È£ÃâÇÏ¿© Å¥¿¡ ´Ù½Ã ³Ö±â
-	public void ReturnSFXPlayerToQueue(AudioSource sfxPlayer)
+	// ì‚¬ìš´ë“œ í”Œë ˆì´ê°€ ëë‚˜ë©´ í˜¸ì¶œí•˜ì—¬ íì— ë‹¤ì‹œ ë„£ê¸°
+	public void ReturnSfxPlayerToQueue(AudioSource sfxPlayer)
 	{
 		_sfxQueue.Enqueue(sfxPlayer);
 	}
 	
-	// »ç¿îµå Àç»ıÀÌ ³¡³ª¸é Ç®¿¡ ¹İÈ¯
-	private IEnumerator ReturnSFXPlayerWhenFinished(AudioSource sfxPlayer, float delay)
+	// ì‚¬ìš´ë“œ ì¬ìƒì´ ëë‚˜ë©´ í’€ì— ë°˜í™˜
+	private async UniTaskVoid ReturnSfxPlayerWhenFinished(AudioSource sfxPlayer, float delay)
 	{
-		// »ç¿îµå Àç»ı ½Ã°£¸¸Å­ ´ë±â
-		yield return new WaitForSeconds(delay);
-
-		// »ç¿îµå Àç»ıÀÌ ³¡³µÀ¸´Ï Å¥¿¡ ¹İÈ¯
-		ReturnSFXPlayerToQueue(sfxPlayer);
+		// ì‚¬ìš´ë“œ ì¬ìƒ ì‹œê°„ë§Œí¼ ëŒ€ê¸°
+		await UniTask.Delay(TimeSpan.FromSeconds(delay));
+		
+		// ì‚¬ìš´ë“œ ì¬ìƒì´ ëë‚¬ìœ¼ë‹ˆ íì— ë°˜í™˜
+		ReturnSfxPlayerToQueue(sfxPlayer);
 	}
-	public void PlaySFX(SoundType soundType)
+	
+	public void PlaySfx(SoundType soundType)
 	{
 		if (_sfxDictionary.TryGetValue(soundType, out AudioClip clip))
 		{
-			AudioSource sfxPlayer = GetAvailableSFXPlayer();
+			AudioSource sfxPlayer = GetAvailableSfxPlayer();
 			sfxPlayer.clip = clip;
-			sfxPlayer.volume = sfxVolume; // º¼·ı Á¶Àı sfxVolume
+			sfxPlayer.volume = sfxVolume; // ë³¼ë¥¨ ì¡°ì ˆ sfxVolume
 			sfxPlayer.Play();
 
-			// »ç¿îµå Àç»ıÀÌ ³¡³ª¸é Ç®¿¡ ¹İÈ¯
-			StartCoroutine(ReturnSFXPlayerWhenFinished(sfxPlayer, clip.length));
+			// ì‚¬ìš´ë“œ ì¬ìƒì´ ëë‚˜ë©´ í’€ì— ë°˜í™˜
+			ReturnSfxPlayerWhenFinished(sfxPlayer, clip.length).Forget();
 		}
 	}
 
-	private AudioSource GetAvailableSFXPlayer()
+	private AudioSource GetAvailableSfxPlayer()
 	{
 		if (_sfxQueue.Count > 0)
 		{
@@ -104,27 +107,27 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 		}
 		else
 		{
-			// »õ ÇÃ·¹ÀÌ¾î¸¦ »ı¼ºÇÏ°í ¸®½ºÆ®¿¡ Ãß°¡
+			// ìƒˆ í”Œë ˆì´ì–´ë¥¼ ìƒì„±í•˜ê³  ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
 			AudioSource newSFXPlayer = gameObject.AddComponent<AudioSource>();
 			sfxPlayers.Add(newSFXPlayer);
 			return newSFXPlayer;
 		}
 	}
 	
-	// ¹è°æÀ½ º¼·ı Á¶Àı
+	// ë°°ê²½ìŒ ë³¼ë¥¨ ì¡°ì ˆ
 	public void SetBgmVolume(float volume)
 	{
-		// ½½¶óÀÌ´õ °ª¿¡µû¶ó º¼·ı Àû¿ë
+		// ìŠ¬ë¼ì´ë” ê°’ì—ë”°ë¼ ë³¼ë¥¨ ì ìš©
 		bgmPlayer.volume = volume;
 
-		// ½½¶óÀÌ´õ °ªÀ» º¯¼ö¿¡ ÀúÀåÇØ¼­ ¹è°æÀ½¾ÇÀ» ½ÇÇàÇÒ¶§¸¶´Ù º¼·ıÀ» ÁöÁ¤
+		// ìŠ¬ë¼ì´ë” ê°’ì„ ë³€ìˆ˜ì— ì €ì¥í•´ì„œ ë°°ê²½ìŒì•…ì„ ì‹¤í–‰í• ë•Œë§ˆë‹¤ ë³¼ë¥¨ì„ ì§€ì •
 		bgmVolume = volume;
 	}
 
-	// È¿°úÀ½ º¼·ı Á¶Àı
+	// íš¨ê³¼ìŒ ë³¼ë¥¨ ì¡°ì ˆ
 	public void SetSfxVolume(float volume)
 	{
-		// ½½¶óÀÌ´õ °ªÀ» º¯¼ö¿¡ ÀúÀåÇØ¼­ È¿°úÀ½À» ½ÇÇàÇÒ¶§¸¶´Ù º¼·ıÀ» ÁöÁ¤
+		// ìŠ¬ë¼ì´ë” ê°’ì„ ë³€ìˆ˜ì— ì €ì¥í•´ì„œ íš¨ê³¼ìŒì„ ì‹¤í–‰í• ë•Œë§ˆë‹¤ ë³¼ë¥¨ì„ ì§€ì •
 		sfxVolume = volume;
 	}
 }
@@ -133,26 +136,25 @@ public enum SoundType
 	MenuBGM = 0,
 	FirstBGM = 1,
 	SecondBGM = 2,
-
-	PlayerWalkSFX=3,
-	PlayerSwingSFX=4,
-	PlayerSwingSFX2=5,
-	PlayerCounterSFX3 = 6,
-	PlayerJumpSFX = 7,
-	PlayerCutSFX = 8,
-	PlayerHitSFX=9,
-	PlayerHitSFX2=10,
-	PlayerElecSFX=11,
-	PlayerElecSFX2=12,
+	PlayerWalkSfx=3,
+	PlayerSwingSfx=4,
+	PlayerSwingSfx2=5,
+	PlayerCounterSfx3 = 6,
+	PlayerJumpSfx = 7,
+	PlayerCutSfx = 8,
+	PlayerHitSfx=9,
+	PlayerHitSfx2=10,
+	PlayerElecSfx=11,
+	PlayerElecSfx2=12,
 	PlayerUsePotion=13,
 	PlayerUseItem=14,
 	PlayerGetItem=15,
-	PlayerBubbleSFX=16,
+	PlayerBubbleSfx=16,
 	PlayerInventoryOpen=17,
 	PlayerUserItem2=18,
 	EnemyHit1=19,
 	EnemyHit2=20,
-	EnmeySfx=21,
+	EnemySfx=21,
 	EnemySfx2=22,
 	EnemySfx3=23
 }
