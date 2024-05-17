@@ -1,11 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class SpitterProjectile : MonoBehaviour
 {
 	private float enemyAttackDmg = 8f;
-	private WaitForSeconds coolTime=new WaitForSeconds(4.5f);
+	private float coolTime=4.5f;
 	private Animator anim;
 
 	private void Awake()
@@ -15,7 +17,7 @@ public class SpitterProjectile : MonoBehaviour
 
 	private void Start()
 	{
-		StartCoroutine(ActiveTime());
+		ActiveTime().Forget();
 	}
 	private void OnTriggerEnter2D(Collider2D other)
 	{
@@ -30,9 +32,9 @@ public class SpitterProjectile : MonoBehaviour
 	{
 		gameObject.SetActive(false);
 	}
-	private IEnumerator ActiveTime()
+	private async UniTaskVoid ActiveTime()
 	{
-		yield return coolTime;
+		await UniTask.Delay(TimeSpan.FromSeconds(coolTime));
 		DisableObj();
 
 	}

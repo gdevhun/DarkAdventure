@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FallingGhoul : Enemy
 {
-	public bool isFalled = false;
+	private bool isFalled = false;
 
 	protected override void Awake()
 	{

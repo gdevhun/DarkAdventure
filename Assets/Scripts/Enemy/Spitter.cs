@@ -5,7 +5,7 @@ using UnityEngine;
 public class Spitter : Enemy
 {
 	public GameObject projectilePrefab;
-	public Transform projectileSpawnPoint;
+	public Transform projectileSp;
 	private float projectileSpeed;
 	private Vector2 dirVec;
 	private float angle;
@@ -81,11 +81,11 @@ public class Spitter : Enemy
 
 		if (spriter.flipX)
 		{
-			projectileSpawnPoint.transform.localPosition = new Vector2(-0.2f, 0.4f);
+			projectileSp.transform.localPosition = new Vector2(-0.2f, 0.4f);
 		}
 		else
 		{
-			projectileSpawnPoint.transform.localPosition = new Vector2(0.2f, 0.4f);
+			projectileSp.transform.localPosition = new Vector2(0.2f, 0.4f);
 		}
 	}
 	public void ThrowProjectile()
@@ -99,7 +99,7 @@ public class Spitter : Enemy
 		angle = Mathf.Atan2(dirVec.y, dirVec.x) * Mathf.Rad2Deg;
 
 		// projectile 발사
-		GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.AngleAxis(angle, Vector3.forward));
+		GameObject projectile = Instantiate(projectilePrefab, projectileSp.position, Quaternion.AngleAxis(angle, Vector3.forward));
 		projectile.transform.parent = this.transform;
 		// 방향 벡터를 통해 add force
 		Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
