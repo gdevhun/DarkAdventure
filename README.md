@@ -35,6 +35,10 @@
 </div>
 </details>
 
+##  시연영상 
+#### ⬇ Link Here ⬇
+<a href="https://youtu.be/e70JtQVzu_8" target="_blank"><img width="65" height="25" src="https://github.com/gdevhun/gdevhun/assets/150761282/67d883af-15ba-4ead-997d-da1ecfbd326a"/></a>
+
 ## 기술 스택 💻
 <img src="https://img.shields.io/badge/Unity-FFFFFF?style=for-the-badge&logo=Unity&logoColor=black"> 
 <img src="https://img.shields.io/badge/csharp-512BD4?style=for-the-badge&logo=csharp&logoColor=white">
